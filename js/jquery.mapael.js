@@ -313,7 +313,7 @@
 		if (options.text && typeof options.text.content != "undefined") {
 			// Set a text label in the area
 			bbox = elem.mapElem.getBBox();
-			textPosition = $.fn.mapael.getTextPosition(bbox, options.text.position, options.text.margin);
+			textPosition = $.fn.mapael.getTextPosition(bbox, options.text.position, options.text.margin, options.text.xshift, options.text.yshift);
 			options.text.attrs["text-anchor"] = textPosition.textAnchor;
 			elem.textElem = paper.text(textPosition.x, textPosition.y, options.text.content).attr(options.text.attrs);
 			$.fn.mapael.setHoverOptions(elem.textElem, options.text.attrs, options.text.attrsHover);
@@ -461,7 +461,7 @@
 				bbox.y -= plotOffset;
 				bbox.y2 += plotOffset;
 			}
-			textPosition = $.fn.mapael.getTextPosition(bbox, elemOptions.text.position, elemOptions.text.margin);
+			textPosition = $.fn.mapael.getTextPosition(bbox, elemOptions.text.position, elemOptions.text.margin, elemOptions.text.xshift, elemOptions.text.yshift);
 			if (textPosition.x != elem.textElem.attrs.x || textPosition.y != elem.textElem.attrs.y) {
 				if (animDuration > 0) {
 					elem.textElem.attr({"text-anchor" : textPosition.textAnchor});
@@ -1013,35 +1013,35 @@
 	* @param bbox the boundary box of the element
 	* @param textPosition the wanted text position (inner, right, left, top or bottom)
 	*/
-	$.fn.mapael.getTextPosition = function(bbox, textPosition, margin) {
+	$.fn.mapael.getTextPosition = function(bbox, textPosition, margin, xshift = 0, yshift = 0) {
 		var textX = 0
 			, textY = 0
 			, textAnchor = "";
 			
 		switch (textPosition) {
 			case "bottom" :
-				textX = (bbox.x + bbox.x2) / 2;
-				textY = bbox.y2 + margin;
+				textX = ((bbox.x + bbox.x2) / 2) + xshift;
+				textY = (bbox.y2 + margin) + yshift;
 				textAnchor = "middle";
 				break;
 			case "top" :
-				textX = (bbox.x + bbox.x2) / 2;
-				textY = bbox.y - margin;
+				textX = ((bbox.x + bbox.x2) / 2) + xshift;
+				textY = (bbox.y - margin) + yshift;
 				textAnchor = "middle";
 				break;
 			case "left" :
-				textX = bbox.x - margin;
-				textY = (bbox.y + bbox.y2) / 2;
+				textX = (bbox.x - margin) + xshift;
+				textY = ((bbox.y + bbox.y2) / 2) + xshift;
 				textAnchor = "end";
 				break;
 			case "right" :
-				textX = bbox.x2 + margin;
-				textY = (bbox.y + bbox.y2) / 2;
+				textX = (bbox.x2 + margin) + xshift;
+				textY = ((bbox.y + bbox.y2) / 2) + yshift;
 				textAnchor = "start";
 				break;
 			default : // "inner" position
-				textX = (bbox.x + bbox.x2) / 2;
-				textY = (bbox.y + bbox.y2) / 2;
+				textX = ((bbox.x + bbox.x2) / 2) + xshift;
+				textY = ((bbox.y + bbox.y2) / 2) + yshift;
 				textAnchor = "middle";
 		}
 		return {"x" : textX, "y" : textY, "textAnchor" : textAnchor};
